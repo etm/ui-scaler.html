@@ -1,0 +1,166 @@
+<!--
+  This file is part of ui-scaler.html.
+
+  ui-scaler.html is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by the Free
+  Software Foundation, either version 3 of the License, or (at your option) any
+  later version.
+
+  ui-scaler.html is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+  details.
+
+  You should have received a copy of the GNU General Public License along with
+  ui-scaler.html (file COPYING in the main directory).  If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+
+<style>
+  ui-scaler {
+    display: inline-table;
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 10em;
+    vertical-align: middle;
+  }
+
+  ui-scaler > div {
+    border: 0 none;
+    display: table-cell;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  ui-scaler > div > ui-scaler-content {
+    display: block;
+    border: 0.1em solid black;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-right: 1px;
+    vertical-align: middle;
+  }
+  ui-scaler > div > ui-scaler-handle {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    align-content: center;
+    width: 100%;
+    font-size: 0.6em;
+    overflow: hidden;
+  }
+  ui-scaler > div:not(:last-of-type) > ui-scaler-handle > ui-scaler-handle-end {
+    text-align: right;
+    direction: rtl;
+    overflow: hidden;
+  }
+
+  ui-scaler > div:not(:last-of-type) > ui-scaler-handle > ui-scaler-handle-end::before {
+    flex: 0 0 auto;
+    display: block;
+    content: "◢";
+    cursor: col-resize;
+  }
+  ui-scaler > div:not(:first-of-type) > ui-scaler-handle > ui-scaler-handle-beg::before {
+    flex: 0 0 auto;
+    display: block;
+    content: "◣";
+    cursor: col-resize;
+  }
+</style>
+
+<template>
+  <template name="config">
+     <div style="width: {percent}%" >
+       <ui-scaler-content>{label}</ui-scaler-content>
+       <ui-scaler-handle>
+          <ui-scaler-handle-beg></ui-scaler-handle-beg>
+          <ui-scaler-handle-end></ui-scaler-handle-end>
+       </ui-scaler-handle>
+     </div>
+  </template>
+</template>
+
+<script>
+  Element `ui-scaler` (class extends HTMLElement {
+
+    initialize () {
+      let self = this;
+      let parameters = this.parameters = [];
+      $(self).attr('data-config').split(";").forEach(function(ele) {
+        let found = ele.match(/^(\d+) +(.*)/);
+        parameters.push({"percent": found[1], "label": found[2]})
+      });
+      $(document).ready(function() {
+        self.ui_scaler_drag_handle();
+      });
+    }
+
+    get config() {
+      return this.parameters;
+    }
+
+    get percentages() {
+      var collect = [];
+      $(this).find('div').each(function(i,ele) {
+        collect.push($(ele).outerWidth());
+      });
+      let sum = collect.reduce((a,b) => a+b, 0)
+      collect = collect.map(x => Math.round(x/(sum/100)));
+      sum     = collect.reduce((a,b) => a+b, 0);
+      collect[collect.length - 1] += 100 - sum;
+      console.log(collect);
+      return collect
+    }
+
+    ui_scaler_drag_handle() {
+      let what = $(this).find('div > ui-scaler-handle > *');
+      what.on("mousedown", function(e) {
+        let drag = $(e.target);
+        drag.addClass('ui-scaler-draggable');
+        $(document).one("mouseup", function(e) {
+          drag.removeClass('ui-scaler-draggable');
+          e.preventDefault();
+        });
+        e.preventDefault();
+      });
+
+      $(document).on("mousemove", function(e) {
+        let drag = $('.ui-scaler-draggable');
+        let next;
+        let prev;
+        if (!drag.hasClass('ui-scaler-draggable'))
+          return;
+
+        if (drag.is('ui-scaler-handle-beg')) {
+          next = drag.parent().parent();
+          prev = next.prev();
+        }
+        if (drag.is('ui-scaler-handle-end')) {
+          prev = drag.parent().parent();
+          next = prev.next();
+        }
+
+        let total = prev.outerWidth() + next.outerWidth();
+        let pos = e.pageX - prev.offset().left;
+        if (pos < 0 ) {
+           pos = 0;
+        }
+        if (pos >= total) {
+          pos = total;
+        }
+
+        prev.css('width', pos + "px");
+        next.css('width', total - pos + "px");
+
+        e.preventDefault();
+      });
+    }
+
+  });
+</script>
+
