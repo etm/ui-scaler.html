@@ -45,18 +45,20 @@ Its fairly simple for now:
 ```
 
 To use ui-scaler.html include it (see [snuggsi
-ツ](https://github.com/devpunks/snuggsi), link rel=preload), and then select ui-scaler elements
-inside your body.
+ツ](https://github.com/devpunks/snuggsi), link rel=preload), and then add
+ui-scaler elements inside your body.
 
 The attribute data-config holds a list (separated by ;) of percentages and
-labels. The percentage has to be an number between 0 and 100 followd by a blank
-an the label.
+labels. The percentage has to be a number between 0 and 100 followd by a space
+an the label (may include spaces).
 
 In order to read the resulting ratios
 
 ```javascript
   let percentages = $('ui-scaler')[0].percentages
   console.log(percentages)
+
+  // yields Array(3) [ 10, 20, 70 ]
 ```
 
 In order to access a structured version of the original config
