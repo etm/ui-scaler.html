@@ -13,6 +13,8 @@ details.
 ui-scaler.html is a snuggsi ツ web component that provides a small ui for
 selecting the ratio between diffent concepts.
 
+![ui-scaler.html](example.png)
+
 Please fork and improve!
 
 ## Dependencies
