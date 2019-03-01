@@ -91,7 +91,7 @@
     initialize () {
       let self = this;
       let parameters = this.parameters = [];
-      $(self).attr('data-config').split(";").forEach(function(ele) {
+      $(self).attr('config').split(";").forEach(function(ele) {
         let found = ele.match(/^(\d+) +(.*)/);
         parameters.push({"percent": found[1], "label": found[2]})
       });

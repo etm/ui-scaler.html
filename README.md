@@ -41,7 +41,7 @@ Its fairly simple for now:
       <link as="fetch" id="ui-scaler" rel="preload" href="ui-scaler.html"/>
     </head>
     <body is="x-ui">
-      <ui-scaler data-config="10 P1;20 P2;70 P3"></ui-scaler>
+      <ui-scaler config="10 P1;20 P2;70 P3"></ui-scaler>
     </body>
   </html>
 ```
@@ -50,7 +50,7 @@ To use ui-scaler.html include it (see [snuggsi
 ツ](https://github.com/devpunks/snuggsi), link rel=preload), and then add
 ui-scaler elements inside your body.
 
-The attribute data-config holds a list (separated by ;) of percentages and
+The attribute config holds a list (separated by ;) of percentages and
 labels. The percentage has to be a number between 0 and 100 followd by a space
 an the label (may include spaces).
 
